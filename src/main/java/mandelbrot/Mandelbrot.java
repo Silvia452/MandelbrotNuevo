@@ -68,6 +68,12 @@ public class Mandelbrot extends javax.swing.JFrame {
             }
         });
 
+        spinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spinnerStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 0, Short.MAX_VALUE));
@@ -82,12 +88,23 @@ public class Mandelbrot extends javax.swing.JFrame {
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+        calcularConjuntoMandelbrot();
+    }
+
+    private void spinnerStateChanged(javax.swing.event.ChangeEvent evt) {
+        // Este método se llama cuando cambia el valor del Spinner.
+        // Vuelve a calcular el conjunto de Mandelbrot con el nuevo número de workers.
+        calcularConjuntoMandelbrot();
+    }
+
+    private void calcularConjuntoMandelbrot() {
         int maxIterations = 300;
         numWorkers = (int) spinner.getValue();
         executor = Executors.newFixedThreadPool(numWorkers);
         resultados = new int[panel.getWidth()][panel.getHeight()];
         updateMandelbrot(maxIterations);
     }
+
 
     private void updateMandelbrot(int maxIterations) {
         executor.shutdownNow();
@@ -154,13 +171,17 @@ public class Mandelbrot extends javax.swing.JFrame {
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+        resetearVista();
+    }
+
+    private void resetearVista() {
         x1 = -2;
         y1 = 1;
         x2 = 1;
         y2 = -1;
-
-        pintaMandelbrot();
+        calcularConjuntoMandelbrot();
     }
+
 
     public static void main(String args[]) {
         try {
@@ -183,6 +204,7 @@ public class Mandelbrot extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             new Mandelbrot().setVisible(true);
         });
+
     }
 
     private class MandelbrotTask implements Runnable {
