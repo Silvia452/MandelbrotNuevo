@@ -27,6 +27,7 @@ public class Mandelbrot extends javax.swing.JFrame {
 
     public Mandelbrot() {
         initComponents();
+        executor = Executors.newFixedThreadPool(numWorkers);
     }
 
     @SuppressWarnings("unchecked")
@@ -88,13 +89,24 @@ public class Mandelbrot extends javax.swing.JFrame {
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Apagar el ExecutorService anterior si está en ejecución
+        if (executor != null && !executor.isTerminated()) {
+            executor.shutdownNow();
+        }
+
+        // Vuelve a calcular el conjunto de Mandelbrot con el nuevo número de workers.
         calcularConjuntoMandelbrot();
+
+        // Pinta los resultados en el panel
+        pintaMandelbrot();
     }
+
 
     private void spinnerStateChanged(javax.swing.event.ChangeEvent evt) {
         // Este método se llama cuando cambia el valor del Spinner.
         // Vuelve a calcular el conjunto de Mandelbrot con el nuevo número de workers.
         calcularConjuntoMandelbrot();
+        pintaMandelbrot();
     }
 
     private void calcularConjuntoMandelbrot() {
@@ -102,8 +114,17 @@ public class Mandelbrot extends javax.swing.JFrame {
         numWorkers = (int) spinner.getValue();
         executor = Executors.newFixedThreadPool(numWorkers);
         resultados = new int[panel.getWidth()][panel.getHeight()];
-        updateMandelbrot(maxIterations);
+
+        int chunkHeight = panel.getHeight() / numWorkers;
+
+        for (int i = 0; i < numWorkers; i++) {
+            int startY = i * chunkHeight;
+            int endY = (i + 1) * chunkHeight - 1;
+            MandelbrotTask task = new MandelbrotTask(0, startY, panel.getWidth() - 1, endY);
+            executor.execute(task);
+        }
     }
+
 
 
     private void updateMandelbrot(int maxIterations) {
@@ -171,7 +192,14 @@ public class Mandelbrot extends javax.swing.JFrame {
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Restaurar la vista inicial del conjunto de Mandelbrot
         resetearVista();
+
+        // Vuelve a calcular el conjunto de Mandelbrot con el nuevo número de workers.
+        calcularConjuntoMandelbrot();
+
+        // Pinta los resultados en el panel
+        pintaMandelbrot();
     }
 
     private void resetearVista() {
@@ -179,7 +207,7 @@ public class Mandelbrot extends javax.swing.JFrame {
         y1 = 1;
         x2 = 1;
         y2 = -1;
-        calcularConjuntoMandelbrot();
+        //calcularConjuntoMandelbrot();
     }
 
 
@@ -250,27 +278,13 @@ public class Mandelbrot extends javax.swing.JFrame {
         return contador;
     }
 
+
+
     private void pintaMandelbrot() {
-        int chunkHeight = panel.getHeight() / numWorkers;
-        executor.shutdownNow();
-        executor = Executors.newFixedThreadPool(numWorkers);
+        // Pintar los resultados en el panel
+        Graphics g = panel.getGraphics();
+        g.clearRect(0, 0, panel.getWidth(), panel.getHeight());
 
-       /* for (int i = 0; i < numWorkers; i++) {
-            int startY = i * chunkHeight;
-            int endY = (i + 1) * chunkHeight - 1;
-            MandelbrotTask task = new MandelbrotTask(0, startY, panel.getWidth() - 1, endY);
-            executor.execute(task);
-        }
-        // Esperar a que todas las tareas terminen
-        try {
-            executor.shutdown();
-            executor.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-
-        //Pintar resultados en el panel
-        Graphics g =panel.getGraphics();
         for (int i = 0; i < panel.getWidth(); i++) {
             for (int j = 0; j < panel.getHeight(); j++) {
                 int velocidad = resultados[i][j];
@@ -279,6 +293,9 @@ public class Mandelbrot extends javax.swing.JFrame {
             }
         }
     }
+
+
+
 
 
 }
