@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9b6bb662-5a67-4d26-b0ae-1f9809de0b8a" name="Changes" comment="Cambios">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mandelbrot/Mandelbrot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mandelbrot/Mandelbrot.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +87,7 @@
       <workItem from="1696579401419" duration="5981000" />
       <workItem from="1696670776879" duration="4974000" />
       <workItem from="1696876369850" duration="804000" />
-      <workItem from="1696931968421" duration="501000" />
+      <workItem from="1696931968421" duration="882000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios">
       <created>1696583051704</created>
@@ -111,7 +110,14 @@
       <option name="project" value="LOCAL" />
       <updated>1696673713831</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Cambios">
+      <created>1696932652669</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1696932652669</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

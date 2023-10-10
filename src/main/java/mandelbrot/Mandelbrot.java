@@ -108,17 +108,15 @@ public class Mandelbrot extends javax.swing.JFrame {
         // Este método se llama cuando cambia el valor del Spinner.
         // Vuelve a calcular el conjunto de Mandelbrot con el nuevo número de workers.
         calcularConjuntoMandelbrot();
+
+        // Pinta los resultados en el panel
         pintaMandelbrot();
     }
 
 
+
     private void calcularConjuntoMandelbrot() {
         int maxIterations = 300;
-
-
-
-
-
 
         numWorkers = (int) spinner.getValue();
         executor = Executors.newFixedThreadPool(numWorkers);
@@ -132,6 +130,7 @@ public class Mandelbrot extends javax.swing.JFrame {
             MandelbrotTask task = new MandelbrotTask(0, startY, panel.getWidth() - 1, endY);
             executor.execute(task);
         }
+
     }
 
 
