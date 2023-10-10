@@ -18,11 +18,13 @@ public class Mandelbrot extends javax.swing.JFrame {
     private double x2 = 1;
     private double y2 = -1;
     private int cx1, cy1, cx2, cy2;
-    // Variables declaration - do not modify
+
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel panel;
     private javax.swing.JSpinner spinner;
+
+    private final Object lock = new Object();
     // End of variables declaration
 
     public Mandelbrot() {
@@ -109,8 +111,15 @@ public class Mandelbrot extends javax.swing.JFrame {
         pintaMandelbrot();
     }
 
+
     private void calcularConjuntoMandelbrot() {
         int maxIterations = 300;
+
+
+
+
+
+
         numWorkers = (int) spinner.getValue();
         executor = Executors.newFixedThreadPool(numWorkers);
         resultados = new int[panel.getWidth()][panel.getHeight()];
@@ -122,41 +131,6 @@ public class Mandelbrot extends javax.swing.JFrame {
             int endY = (i + 1) * chunkHeight - 1;
             MandelbrotTask task = new MandelbrotTask(0, startY, panel.getWidth() - 1, endY);
             executor.execute(task);
-        }
-    }
-
-
-
-    private void updateMandelbrot(int maxIterations) {
-        executor.shutdownNow();
-        executor = Executors.newFixedThreadPool(numWorkers);
-        resultados = new int[panel.getWidth()][panel.getHeight()];
-
-        int chunkHeight = panel.getHeight() / numWorkers;
-
-        for (int i = 0; i < numWorkers; i++) {
-            int startY = i * chunkHeight;
-            int endY = (i + 1) * chunkHeight - 1;
-            MandelbrotTask task = new MandelbrotTask(0, startY, panel.getWidth() - 1, endY);
-            executor.execute(task);
-        }
-
-        // Esperar a que todas las tareas terminen
-        try {
-            executor.shutdown();
-            executor.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Pintar los resultados en el panel
-        Graphics g = panel.getGraphics();
-        for (int i = 0; i < panel.getWidth(); i++) {
-            for (int j = 0; j < panel.getHeight(); j++) {
-                int velocidad = resultados[i][j];
-                g.setColor(Color.getHSBColor((float) velocidad / maxIterations, 1, 1));
-                g.drawRect(i, j, 1, 1);
-            }
         }
     }
 
